@@ -32,6 +32,12 @@ jobs:
             --build-arg VITE_API_URL=http://backend:4000 \
             -t products-frontend ./FE
 
-      # 5️⃣ (Optional but recommended) Validate compose
+      # 5️⃣ Create .env file for docker-compose validation
+      - name: Create .env file
+        run: |
+          mkdir -p BE
+          touch BE/.env
+
+      # 6️⃣ (Optional but recommended) Validate compose
       - name: Docker Compose Config Check
         run: docker compose -f docker-compose.dev.yml config
