@@ -1,0 +1,50 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - backend-net
+
+  backend:
+    build:
+      context: ./BE
+      dockerfile: Dockerfile
+    image: w1-backend
+    container_name: products-be
+    ports:
+      - "4001:4000"
+    environment:
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/productsdb
+    depends_on:
+      - mongo
+    networks:
+      - backend-net
+
+  frontend:
+    build:
+      context: ./FE
+      dockerfile: Dockerfile
+    image: w1-frontend
+    container_name: products-fe
+    ports:
+      - "8080:5173"
+    depends_on:
+      - backend
+    networks:
+      - frontend-net
+      - backend-net
+
+volumes:
+  mongo-data:
+
+networks:
+  backend-net:
+  frontend-net:
+
+

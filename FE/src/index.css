@@ -1,0 +1,59 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+}
+
+.card {
+  margin-bottom: 20px;
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+label {
+  display: block;
+  margin: 5px 0;
+}
+
+input[type='text'],
+input[type='number'],
+textarea {
+  width: 100%;
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+button {
+  margin-right: 5px;
+}
+
+.actions {
+  margin-top: 10px;
+}
+
+.error {
+  margin: 10px 0;
+  padding: 8px;
+  background: #ffe5e5;
+  border: 1px solid #ffaaaa;
+}
+
+
