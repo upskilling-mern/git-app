@@ -23,7 +23,7 @@ function App() {
       setProducts(data);
     } catch (err) {
       console.error(err);
-      setError('Error loading products. Is the backend running?');
+      setError('Error loading products!! Is the backend running?');
     }
   }
 
