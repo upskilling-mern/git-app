@@ -8,8 +8,10 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-dev:
+    name: Build and Test (Development)
     runs-on: ubuntu-latest
+    environment: dev
 
     steps:
       # 1️⃣ Checkout code
@@ -20,24 +22,83 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
-      # 3️⃣ Build Backend Image
+      # 3️⃣ Create .env.dev files from secrets
+      - name: Create Backend .env.dev
+        run: |
+          cat > BE/.env.dev << EOF
+          PORT=${{ secrets.BE_PORT_DEV }}
+          NODE_ENV=development
+          MONGO_URI=${{ secrets.MONGO_URI_DEV }}
+          LOG_LEVEL=${{ secrets.LOG_LEVEL_DEV }}
+          EOF
+
+      - name: Create Frontend .env.dev
+        run: |
+          cat > FE/.env.dev << EOF
+          VITE_API_URL=${{ secrets.VITE_API_URL_DEV }}
+          VITE_ENV=development
+          EOF
+
+      # 4️⃣ Build Backend Image
       - name: Build Backend
         run: |
           docker build -t products-backend ./BE
 
-      # 4️⃣ Build Frontend Image
+      # 5️⃣ Build Frontend Image
       - name: Build Frontend
         run: |
           docker build \
-            --build-arg VITE_API_URL=http://backend:4000 \
+            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL_DEV }} \
             -t products-frontend ./FE
 
-      # 5️⃣ Create .env file for docker-compose validation
-      - name: Create .env file
-        run: |
-          mkdir -p BE
-          touch BE/.env
-
-      # 6️⃣ (Optional but recommended) Validate compose
-      - name: Docker Compose Config Check
+      # 6️⃣ Validate docker-compose.dev.yml
+      - name: Docker Compose Config Check (Dev)
         run: docker compose -f docker-compose.dev.yml config
+
+  build-prod:
+    name: Build and Test (Production)
+    runs-on: ubuntu-latest
+    environment: prod
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      # 1️⃣ Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2️⃣ Setup Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      # 3️⃣ Create .env.prod files from secrets
+      - name: Create Backend .env.prod
+        run: |
+          cat > BE/.env.prod << EOF
+          PORT=${{ secrets.BE_PORT_PROD }}
+          NODE_ENV=production
+          MONGO_URI=${{ secrets.MONGO_URI_PROD }}
+          LOG_LEVEL=${{ secrets.LOG_LEVEL_PROD }}
+          EOF
+
+      - name: Create Frontend .env.prod
+        run: |
+          cat > FE/.env.prod << EOF
+          VITE_API_URL=${{ secrets.VITE_API_URL_PROD }}
+          VITE_ENV=production
+          EOF
+
+      # 4️⃣ Build Backend Image
+      - name: Build Backend
+        run: |
+          docker build -t products-backend-prod ./BE
+
+      # 5️⃣ Build Frontend Image
+      - name: Build Frontend
+        run: |
+          docker build \
+            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL_PROD }} \
+            -t products-frontend-prod ./FE
+
+      # 6️⃣ Validate docker-compose.prod.yml
+      - name: Docker Compose Config Check (Prod)
+        run: docker compose -f docker-compose.prod.yml config

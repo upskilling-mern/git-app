@@ -1,14 +1,17 @@
-name: Frontend Docker CI
+name: Docker Image Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "dev" ]
 
 jobs:
-  build:
+  build-frontend-dev:
+    name: Build Frontend (Dev)
     runs-on: ubuntu-latest
+    environment: dev
+    if: github.ref == 'refs/heads/dev' || github.event.pull_request.head.ref == 'dev'
 
     steps:
       - name: Checkout code
@@ -17,6 +20,27 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
-      - name: Build Docker image
+      - name: Build Frontend Docker image (Dev)
         run: |
-          docker build -t w1-frontend .
+          docker build \
+            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL_DEV }} \
+            -t w1-frontend-dev ./FE
+
+  build-frontend-prod:
+    name: Build Frontend (Prod)
+    runs-on: ubuntu-latest
+    environment: prod
+    if: github.ref == 'refs/heads/main' || github.event.pull_request.head.ref == 'main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Frontend Docker image (Prod)
+        run: |
+          docker build \
+            --build-arg VITE_API_URL=${{ secrets.VITE_API_URL_PROD }} \
+            -t w1-frontend-prod ./FE

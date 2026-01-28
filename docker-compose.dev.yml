@@ -19,7 +19,10 @@ services:
     ports:
       - "4001:4000"
     env_file:
-      - ./BE/.env
+      - ./BE/.env.dev # Development-specific env file
+    environment:
+      - NODE_ENV=development
+      # Override env vars here if needed (takes precedence over env_file)
     depends_on:
       - mongo
     networks:
@@ -30,11 +33,14 @@ services:
       context: ./FE
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: http://backend:4000
+        # Development: Use internal Docker network URL
+        VITE_API_URL=${VITE_API_URL:-http://backend:4000/api/products}
     image: w1-frontend
     container_name: products-fe
     ports:
       - "8080:5173"
+    env_file:
+      - ./FE/.env.dev # Development-specific env file
     depends_on:
       - backend
     networks:
@@ -43,6 +49,7 @@ services:
 
 volumes:
   mongo-data:
+
 
 networks:
   backend-net:

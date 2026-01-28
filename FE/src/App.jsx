@@ -17,7 +17,7 @@ function App() {
   async function loadProducts() {
     try {
       setError('');
-      const res = await fetch(API_BASE);
+      const res = await fetch(API_URL);
       if (!res.ok) throw new Error('Failed to load products');
       const data = await res.json();
       setProducts(data);
@@ -60,7 +60,7 @@ function App() {
         inStock: form.inStock
       };
       const method = editingId ? 'PUT' : 'POST';
-      const url = editingId ? `${API_BASE}/${editingId}` : API_BASE;
+      const url = editingId ? `${API_URL}/${editingId}` : API_URL;
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -79,7 +79,7 @@ function App() {
 
   async function handleEdit(id) {
     try {
-      const res = await fetch(`${API_BASE}/${id}`);
+      const res = await fetch(`${API_URL}/${id}`);
       if (!res.ok) throw new Error('Failed to load product');
       const p = await res.json();
       setEditingId(p._id);
@@ -98,7 +98,7 @@ function App() {
   async function handleDelete(id) {
     if (!window.confirm('Delete this product?')) return;
     try {
-      const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete product');
       await loadProducts();
     } catch (err) {

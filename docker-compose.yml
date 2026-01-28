@@ -18,9 +18,11 @@ services:
     container_name: products-be
     ports:
       - "4001:4000"
+    env_file:
+      - ./BE/.env  # Default env file (can be overridden)
     environment:
-      - PORT=4000
-      - MONGO_URI=mongodb://mongo:27017/productsdb
+      # Inline environment variables (takes precedence over env_file)
+      - NODE_ENV=${NODE_ENV:-development}
     depends_on:
       - mongo
     networks:

@@ -1,0 +1,59 @@
+# Production Docker Compose Configuration
+# Usage: docker-compose -f docker-compose.prod.yml up -d
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: mongo-prod
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data-prod:/data/db
+    networks:
+      - backend-net
+    # Production: Consider using MongoDB Atlas instead of self-hosted
+
+  backend:
+    build:
+      context: ./BE
+      dockerfile: Dockerfile
+    image: w1-backend-prod
+    container_name: products-be-prod
+    ports:
+      - "4000:4000"  # Production: Direct port mapping
+    env_file:
+      - ./BE/.env.prod  # Production-specific env file
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - mongo
+    networks:
+      - backend-net
+    restart: always
+    # Production: Add health checks, resource limits, etc.
+
+  frontend:
+    build:
+      context: ./FE
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL=${VITE_API_URL:-https://api.yourdomain.com/api/products}
+    image: w1-frontend-prod
+    container_name: products-fe-prod
+    ports:
+      - "80:5173"  # Production: Standard HTTP port
+    depends_on:
+      - backend
+    networks:
+      - frontend-net
+      - backend-net
+    restart: always
+
+volumes:
+  mongo-data-prod:
+
+networks:
+  backend-net:
+  frontend-net:
+
