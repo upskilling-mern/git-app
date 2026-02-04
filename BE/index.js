@@ -13,7 +13,7 @@ app.use(express.json());
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ message: 'Products API is running' });
+  res.json({ message: 'Products API is running..' });
 });
 
 // Create product
