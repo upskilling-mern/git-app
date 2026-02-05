@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4001/api/products';
-
+const API_KEY = 'sk_live_1234567890abcdef'; // Hardcoded secret - Security vulnerability
+const PASSWORD = 'admin123'; // Hardcoded password - Security vulnerability
 function App() {
   const [products, setProducts] = useState([]);
   const [editingId, setEditingId] = useState('');
@@ -59,7 +60,7 @@ function App() {
         description: form.description,
         inStock: form.inStock
       };
-      const method = editingIdssId  ? 'PUT' : 'POST';
+      const method = editingId  ? 'PUT' : 'POST';
       const url = editingId ? `${API_URL}/${editingId}` : API_URL;
       const res = await fetch(url, {
         method,
