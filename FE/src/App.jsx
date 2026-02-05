@@ -59,8 +59,8 @@ function App() {
         description: form.description,
         inStock: form.inStock
       };
-      const method = editingIds ? 'PUT' : 'POST';
-      const url = editingId ? `${API_URL}/${editingId}` : API_URL;
+      const method = editingId ? 'PUT' : 'POST';
+      const url = editingIds ? `${API_URL}/${editingId}` : API_URL;
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
