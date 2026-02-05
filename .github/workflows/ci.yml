@@ -14,22 +14,25 @@ jobs:
     environment: dev
 
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # 2️⃣ Setup Docker
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
-      # 3️⃣ Create .env.dev files from secrets
       - name: Create Backend .env.dev
         run: |
           cat > BE/.env.dev << EOF
           PORT=${{ secrets.BE_PORT_DEV }}
           NODE_ENV=development
           MONGO_URI=${{ secrets.MONGO_URI_DEV }}
-          LOG_LEVEL=${{ secrets.LOG_LEVEL_DEV }}
           EOF
 
       - name: Create Frontend .env.dev
@@ -39,19 +42,16 @@ jobs:
           VITE_ENV=development
           EOF
 
-      # 4️⃣ Build Backend Image
       - name: Build Backend
         run: |
           docker build -t products-backend ./BE
 
-      # 5️⃣ Build Frontend Image
       - name: Build Frontend
         run: |
           docker build \
             --build-arg VITE_API_URL=${{ secrets.VITE_API_URL_DEV }} \
             -t products-frontend ./FE
 
-      # 6️⃣ Validate docker-compose.dev.yml
       - name: Docker Compose Config Check (Dev)
         run: docker compose -f docker-compose.dev.yml config
 
@@ -62,22 +62,25 @@ jobs:
     if: github.ref == 'refs/heads/main'
 
     steps:
-      # 1️⃣ Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      # 2️⃣ Setup Docker
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
 
-      # 3️⃣ Create .env.prod files from secrets
       - name: Create Backend .env.prod
         run: |
           cat > BE/.env.prod << EOF
           PORT=${{ secrets.BE_PORT_PROD }}
           NODE_ENV=production
           MONGO_URI=${{ secrets.MONGO_URI_PROD }}
-          LOG_LEVEL=${{ secrets.LOG_LEVEL_PROD }}
           EOF
 
       - name: Create Frontend .env.prod
@@ -87,18 +90,15 @@ jobs:
           VITE_ENV=production
           EOF
 
-      # 4️⃣ Build Backend Image
       - name: Build Backend
         run: |
           docker build -t products-backend-prod ./BE
 
-      # 5️⃣ Build Frontend Image
       - name: Build Frontend
         run: |
           docker build \
             --build-arg VITE_API_URL=${{ secrets.VITE_API_URL_PROD }} \
             -t products-frontend-prod ./FE
 
-      # 6️⃣ Validate docker-compose.prod.yml
       - name: Docker Compose Config Check (Prod)
         run: docker compose -f docker-compose.prod.yml config
