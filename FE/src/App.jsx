@@ -59,7 +59,7 @@ function App() {
         description: form.description,
         inStock: form.inStock
       };
-      const method = editingId ? 'PUT' : 'POST';
+      const method = editingIds ? 'PUT' : 'POST';
       const url = editingId ? `${API_URL}/${editingId}` : API_URL;
       const res = await fetch(url, {
         method,
