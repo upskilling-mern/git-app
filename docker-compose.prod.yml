@@ -38,7 +38,7 @@ services:
       context: ./FE
       dockerfile: Dockerfile
       args:
-        VITE_API_URL=${VITE_API_URL:-https://api.yourdomain.com/api/products}
+        VITE_API_URL: ${VITE_API_URL:-https://api.yourdomain.com/api/products}
     image: w1-frontend-prod
     container_name: products-fe-prod
     ports:

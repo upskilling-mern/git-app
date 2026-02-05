@@ -33,8 +33,7 @@ services:
       context: ./FE
       dockerfile: Dockerfile
       args:
-        # Development: Use internal Docker network URL
-        VITE_API_URL=${VITE_API_URL:-http://backend:4000/api/products}
+        VITE_API_URL: ${VITE_API_URL:-http://backend:4000/api/products}
     image: w1-frontend
     container_name: products-fe
     ports:
