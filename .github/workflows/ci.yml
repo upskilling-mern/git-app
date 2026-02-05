@@ -24,6 +24,11 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
+            -Dsonar.projectKey=upskilling-mern_git-app
+            -Dsonar.organization=upskilling-mern
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
@@ -73,6 +78,9 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
+        with:
+          args: >
+            -Dsonar.qualitygate.wait=true
 
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3
